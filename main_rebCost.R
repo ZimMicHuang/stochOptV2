@@ -18,18 +18,26 @@ reb_cost_grid = expand.grid(time_change=time_change_vec,
                             mag_change=mag_change_vec)
 reb_cost_grid = cbind(reb_cost_grid,reb_cost_stoch=numeric(length(time_change_vec)*length(mag_change_vec)),reb_cost_reg = numeric(length(time_change_vec)*length(mag_change_vec)))
 rc=0
-for (i in 1:nrow(reb_cost_grid)) {
+chunksize = 20
+for (i in 41:nrow(reb_cost_grid)) {
   l_df = l_df_all[sample(x=1:10000,size=N_SIM,replace=FALSE),]
   tc = reb_cost_grid[i,1]
   mc = reb_cost_grid[i,2]
   rc = 0
   res = getRebCost(time_change=tc,mag_change=mc,N_SIM = N_SIM,TF=TF,
                    df0=df0,markDat = markDat,l_df=l_df,
-                   parallel=TRUE,cores=6)
+                   parallel=TRUE,cores=8)
   av_reb_stoch = mean(res$stoch$reb_cost[,1]-res$stoch$reb_cost[,2]) # negative means cash outflow
   av_reb_reg = mean(res$reg$reb_cost[,1]-res$reg$reb_cost[,2])
   reb_cost_grid[i,3] = av_reb_stoch
   reb_cost_grid[i,4] = av_reb_reg
   print(reb_cost_grid[i,])
   print(i)
+  if (i%%chunksize==0) {
+    save(reb_cost_grid,file=paste0(
+      "rebancing cost ",
+      i%/%chunksize,
+      " twenty.RData"))
+  } 
 }
+save(reb_cost_grid,file="rebancing cost 1 twenty.RData")
