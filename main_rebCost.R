@@ -8,8 +8,8 @@ N_SIM=400
 TF=36
 df0 = getDefDat(type="read")
 markDat = getBondDat(type="read")
-l_df_all = runSimLiab(type="gen",N_SIM = 10000)
-
+# l_df_all = runSimLiab(type="gen",N_SIM = 10000)
+load("l_dfRebcost.Rdata")
 
 
 time_change_vec = seq(1,22,by=2)
@@ -19,14 +19,14 @@ reb_cost_grid = expand.grid(time_change=time_change_vec,
 reb_cost_grid = cbind(reb_cost_grid,reb_cost_stoch=numeric(length(time_change_vec)*length(mag_change_vec)),reb_cost_reg = numeric(length(time_change_vec)*length(mag_change_vec)))
 rc=0
 chunksize = 20
-for (i in 41:nrow(reb_cost_grid)) {
+for (i in 96:nrow(reb_cost_grid)) {
   l_df = l_df_all[sample(x=1:10000,size=N_SIM,replace=FALSE),]
   tc = reb_cost_grid[i,1]
   mc = reb_cost_grid[i,2]
   rc = 0
   res = getRebCost(time_change=tc,mag_change=mc,N_SIM = N_SIM,TF=TF,
                    df0=df0,markDat = markDat,l_df=l_df,
-                   parallel=TRUE,cores=8)
+                   parallel=TRUE,cores=6)
   av_reb_stoch = mean(res$stoch$reb_cost[,1]-res$stoch$reb_cost[,2]) # negative means cash outflow
   av_reb_reg = mean(res$reg$reb_cost[,1]-res$reg$reb_cost[,2])
   reb_cost_grid[i,3] = av_reb_stoch
@@ -40,4 +40,4 @@ for (i in 41:nrow(reb_cost_grid)) {
       " twenty.RData"))
   } 
 }
-save(reb_cost_grid,file="rebancing cost 1 twenty.RData")
+save(reb_cost_grid,file="rebancing cost 61 to 121.RData")
