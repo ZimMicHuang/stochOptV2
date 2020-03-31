@@ -2,8 +2,6 @@ This is a my undergraduate thesis. I worked on this with JC Borman, Nicolas Colo
 
 # Liability Matching with Defaultable Securities: A Stochastic Dominance Approach
 
-# Author: Ziming Huang, JC Borman, Nicolas Colonna, Aisha Koyas
-
 # Abstract
 
 We propose a new framework of the interest-rate-immunized liability matching problem in which de-
